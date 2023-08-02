@@ -1,0 +1,12 @@
+{
+  "lock": false,
+  "tasks": {
+    "build": "deno run --allow-net --allow-read --allow-write build.ts"
+  },
+  "fmt": {
+    "indentWidth": 2,
+    "singleQuote": true,
+    "semiColons": true,
+    "lineWidth": 100
+  }
+}
