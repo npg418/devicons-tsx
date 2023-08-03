@@ -20,8 +20,8 @@ for (const iconInfo of DeviconData) {
     Deno.stdout.writeSync(enc(`\n🟥 ${name} building`));
     const url = `${iconsRemote}/${iconInfo.name}/${iconInfo.name}-${variant}.svg`;
     const svg = await fetch(url).then((res) => res.text());
-    const jsx = svg.replace(/<svg ([^>]*)>/, (_, g: string) => `<svg ${g.replace(/xml:([^ =]+)/g, (_, p) => camelCase(`xml ${p}`))} {...props}>`);
-    const fc = `export default function ${name}(props: Record<string, unknown>) { return (${jsx}) }`;
+    const jsx = svg.replace(/<svg ([^>]*)>/, (_, g: string) => `<svg ${g.replace(/xml:([^ =]+)/g, (_, p) => camelCase(`xml ${p}`))} width={w} height={h} {...props}>`);
+    const fc = `export default function ${name}({ w = 24, h = 24, ...props }) { return (${jsx}) }`;
     Deno.writeFileSync(`icons/${name}.tsx`, enc(fc));
     Deno.writeFileSync('mod.ts', enc(`export { default as ${name} } from './icons/${name}.tsx';\n`), { append: true });
     Deno.stdout.writeSync(enc(`\x1B[1K\r🟦 ${name} built`));
