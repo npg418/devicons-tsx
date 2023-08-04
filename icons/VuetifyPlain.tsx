@@ -1,2 +1,2 @@
-export default function VuetifyPlain({ w = 64, h = 64, ...props }) { return (<svg viewBox="0 0 128 128" fill="none" xmlnsHttpWwwW3Org_2000Svg width={w} height={h} {...props}><path d="M34.442 0l29.815 61.824L93.879 0H34.442zM0 18.667L64.257 128 128 18.667H94.843L64.257 80 33.349 18.667H0z" fill="#000"/></svg>
+export default function VuetifyPlain({ w = 64, h = 64, ...props }) { return (<svg viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" width={w} height={h} {...props}><path d="M34.442 0l29.815 61.824L93.879 0H34.442zM0 18.667L64.257 128 128 18.667H94.843L64.257 80 33.349 18.667H0z" fill="#000"/></svg>
 ) }
