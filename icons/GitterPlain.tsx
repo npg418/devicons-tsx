@@ -1,1 +1,1 @@
-export default function GitterPlain({ w = 64, h = 64, ...props }) { return (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width={w} height={h} {...props}><path d="M96.8 25.6H107v51.2H96.8zM71.2 25.6h10.2V128H71.2zM45.6 25.6h10.2V128H45.6zM20 0h10.2v76.8H20z"/></svg>) }
+export default function GitterPlain({ w = 64, h = 64, ...props }) { return (<svg xmlnsHttpWwwW3Org_2000Svg viewBox="0 0 128 128" width={w} height={h} {...props}><path d="M96.8 25.6H107v51.2H96.8zM71.2 25.6h10.2V128H71.2zM45.6 25.6h10.2V128H45.6zM20 0h10.2v76.8H20z"/></svg>) }
