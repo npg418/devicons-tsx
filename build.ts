@@ -11,19 +11,38 @@ try {
   Deno.mkdirSync('icons');
 }
 
-const iconsRemote = 'https://raw.githubusercontent.com/devicons/devicon/master/icons';
 const enc = (s: string) => new TextEncoder().encode(s);
 
-for (const iconInfo of DeviconData) {
-  for (const variant of iconInfo.versions.svg) {
-    const name = upperFirstCase(camelCase(iconInfo.name+'-'+variant));
-    Deno.stdout.writeSync(enc(`\n🟥 ${name} building`));
-    const url = `${iconsRemote}/${iconInfo.name}/${iconInfo.name}-${variant}.svg`;
-    const svg = await fetch(url).then((res) => res.text());
-    const jsx = svg.replace(/<svg ([^>]*)>/, (_, g: string) => `<svg ${g.replace(/xml:([^ =]+)/g, (_, p) => camelCase(`xml ${p}`))} width={w} height={h} {...props}>`);
-    const fc = `export default function ${name}({ w = 64, h = 64, ...props }) { return (${jsx}) }`;
-    Deno.writeFileSync(`icons/${name}.tsx`, enc(fc));
-    Deno.writeFileSync('mod.ts', enc(`export { default as ${name} } from './icons/${name}.tsx';\n`), { append: true });
-    Deno.stdout.writeSync(enc(`\x1B[1K\r🟦 ${name} built`));
-  }
+async function buildIcon(url: string, name: string) {
+  const svg = await fetch(url).then((res) => res.text());
+  const jsx = svg.replace(/<svg ([^>]*)>/, (_, g: string) => `<svg ${g.replace(/xml:([^ =]+)/g, (_, p) => camelCase(`xml ${p}`))} width={w} height={h} {...props}>`);
+  const fc = `export default function ${name}({ w = 64, h = 64, ...props }) { return (${jsx}) }`;
+  await Deno.writeFile(`icons/${name}.tsx`, enc(fc));
 }
+
+const iconsRemote = 'https://raw.githubusercontent.com/devicons/devicon/master/icons';
+const nameVariantPair = DeviconData.map((iconInfo) => iconInfo.versions.svg.map((variant) => [iconInfo.name, variant] as const)).flat();
+
+const total = nameVariantPair.length;
+let progress = -1;
+function logProgress() {
+  progress++;
+  const percentage = (progress / total) * 100;
+  Deno.stdout.writeSync(enc(`\x1B[1K\r${`${percentage.toFixed(1)}%`.padEnd(5)} done! [${String(progress).padStart(String(total).length)}/${total}]`));
+}
+
+console.log('Building icons...');
+logProgress();
+await Promise.all(nameVariantPair.map(async ([name, variant]) => {
+  await buildIcon(`${iconsRemote}/${name}/${name}-${variant}.svg`, upperFirstCase(camelCase(`${name}-${variant}`)));
+  logProgress();
+}));
+console.log('\nDone!');
+
+console.log('Writing mod.ts...');
+const iconNames = nameVariantPair.map(([name, variant]) => upperFirstCase(camelCase(`${name}-${variant}`)));
+
+for (const name of iconNames) {
+  await Deno.writeTextFile('mod.ts', `export { default as ${name} } from './icons/${name}.tsx';\n`, { append: true });
+}
+console.log('Done!');
