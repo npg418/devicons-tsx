@@ -16,7 +16,7 @@ const enc = (s: string) => new TextEncoder().encode(s);
 async function buildIcon(url: string, name: string) {
   const svg = await fetch(url).then((res) => res.text());
   const jsx = svg.replace(/<svg ([^>]*)>/, (_, $1) => `<svg ${$1} width={w} height={h} {...props}>`)
-    .replace(/([^ ]+):([^ =]+)/g, (_, $1, $2) => camelCase(`${$1} ${$2}`))
+    .replace(/ ([^ =:;]+):([^ =]+)([ =])/g, (_, $1, $2, $3) => ` ${camelCase(`${$1} ${$2}`)}${$3}`)
     .replace(/<style(.*)>(.*)<\/style>/, '<style$1>{`$2`}</style>');
   const fc = `export default function ${name}({ w = 64, h = 64, ...props }) { return (${jsx}) }`;
   await Deno.writeFile(`icons/${name}.tsx`, enc(fc));
